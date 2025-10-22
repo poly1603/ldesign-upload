@@ -1,0 +1,15 @@
+{
+  "name": "@ldesign/upload",
+  "version": "0.1.0",
+  "description": "上传组件 - 拖拽上传、分片、断点续传",
+  "keywords": ["ldesign", "upload", "file-upload"],
+  "author": "LDesign Team",
+  "license": "MIT",
+  "type": "module",
+  "main": "./lib/index.cjs",
+  "module": "./es/index.js",
+  "scripts": {"build": "ldesign-builder build -f esm,cjs,dts"},
+  "dependencies": {"@ldesign/shared": "workspace:*", "@ldesign/file": "workspace:*"},
+  "devDependencies": {"@ldesign/builder": "workspace:*", "typescript": "^5.7.3"}
+}
+
