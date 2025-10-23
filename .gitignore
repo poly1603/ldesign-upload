@@ -1,4 +1,8 @@
-node_modules
-es
-lib
-dist
+node_modules/
+dist/
+*.log
+.DS_Store
+coverage/
+.vscode/
+.idea/
+*.local

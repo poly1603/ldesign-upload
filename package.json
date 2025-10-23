@@ -1,15 +1,108 @@
 {
   "name": "@ldesign/upload",
-  "version": "0.1.0",
-  "description": "上传组件 - 拖拽上传、分片、断点续传",
-  "keywords": ["ldesign", "upload", "file-upload"],
+  "version": "1.0.0",
+  "description": "A powerful, framework-agnostic file upload library with chunking, resumption, image/video processing, and beautiful UI",
+  "keywords": [
+    "upload",
+    "file-upload",
+    "drag-drop",
+    "chunk-upload",
+    "resume-upload",
+    "image-processing",
+    "video-processing",
+    "typescript",
+    "vue",
+    "react",
+    "angular",
+    "ldesign"
+  ],
   "author": "LDesign Team",
   "license": "MIT",
   "type": "module",
-  "main": "./lib/index.cjs",
-  "module": "./es/index.js",
-  "scripts": {"build": "ldesign-builder build -f esm,cjs,dts"},
-  "dependencies": {"@ldesign/shared": "workspace:*", "@ldesign/file": "workspace:*"},
-  "devDependencies": {"@ldesign/builder": "workspace:*", "typescript": "^5.7.3"}
+  "main": "./dist/index.cjs",
+  "module": "./dist/index.js",
+  "types": "./dist/index.d.ts",
+  "exports": {
+    ".": {
+      "types": "./dist/index.d.ts",
+      "import": "./dist/index.js",
+      "require": "./dist/index.cjs"
+    },
+    "./vue": {
+      "types": "./dist/vue.d.ts",
+      "import": "./dist/vue.js",
+      "require": "./dist/vue.cjs"
+    },
+    "./react": {
+      "types": "./dist/react.d.ts",
+      "import": "./dist/react.js",
+      "require": "./dist/react.cjs"
+    },
+    "./adapters": {
+      "types": "./dist/adapters.d.ts",
+      "import": "./dist/adapters.js",
+      "require": "./dist/adapters.cjs"
+    },
+    "./processors": {
+      "types": "./dist/processors.d.ts",
+      "import": "./dist/processors.js",
+      "require": "./dist/processors.cjs"
+    },
+    "./style.css": "./dist/style.css",
+    "./dist/style.css": "./dist/style.css"
+  },
+  "files": [
+    "dist",
+    "README.md",
+    "LICENSE"
+  ],
+  "scripts": {
+    "dev": "vite",
+    "build": "vite build && tsc --emitDeclarationOnly",
+    "preview": "vite preview",
+    "lint": "eslint . --fix",
+    "test": "vitest",
+    "test:coverage": "vitest --coverage"
+  },
+  "dependencies": {
+    "@ldesign/shared": "workspace:*",
+    "@ldesign/file": "workspace:*",
+    "@ldesign/http": "workspace:*",
+    "@ldesign/crypto": "workspace:*"
+  },
+  "devDependencies": {
+    "@ldesign/builder": "workspace:*",
+    "@types/node": "^20.10.0",
+    "@vitejs/plugin-vue": "^5.0.0",
+    "typescript": "^5.7.3",
+    "vite": "^5.0.0",
+    "vite-plugin-dts": "^3.7.0",
+    "vitest": "^1.0.0",
+    "vue": "^3.4.0",
+    "react": "^18.2.0",
+    "react-dom": "^18.2.0",
+    "@types/react": "^18.2.0",
+    "@types/react-dom": "^18.2.0",
+    "@angular/core": "^17.0.0"
+  },
+  "peerDependencies": {
+    "vue": "^3.0.0",
+    "react": "^16.8.0 || ^17.0.0 || ^18.0.0",
+    "react-dom": "^16.8.0 || ^17.0.0 || ^18.0.0",
+    "@angular/core": "^15.0.0 || ^16.0.0 || ^17.0.0"
+  },
+  "peerDependenciesMeta": {
+    "vue": {
+      "optional": true
+    },
+    "react": {
+      "optional": true
+    },
+    "react-dom": {
+      "optional": true
+    },
+    "@angular/core": {
+      "optional": true
+    }
+  }
 }
-

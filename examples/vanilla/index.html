@@ -1,0 +1,313 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>@ldesign/upload - Vanilla JS Example</title>
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    body {
+      font-family: system-ui, -apple-system, sans-serif;
+      background: #f5f5f5;
+      padding: 2rem;
+    }
+
+    .container {
+      max-width: 900px;
+      margin: 0 auto;
+    }
+
+    h1 {
+      margin-bottom: 2rem;
+      color: #333;
+    }
+
+    .examples {
+      display: grid;
+      gap: 2rem;
+    }
+
+    .example {
+      background: white;
+      padding: 2rem;
+      border-radius: 8px;
+      box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+    }
+
+    .example h2 {
+      margin-bottom: 1rem;
+      color: #555;
+      font-size: 1.25rem;
+    }
+
+    .example p {
+      margin-bottom: 1rem;
+      color: #666;
+    }
+
+    #uploader {
+      min-height: 300px;
+      border: 2px dashed #ddd;
+      border-radius: 8px;
+      padding: 2rem;
+      text-align: center;
+      transition: all 0.3s;
+    }
+
+    #uploader:hover {
+      border-color: #3b82f6;
+      background: #eff6ff;
+    }
+
+    .stats {
+      margin-top: 1rem;
+      padding: 1rem;
+      background: #f9fafb;
+      border-radius: 4px;
+    }
+
+    .stats p {
+      margin: 0.5rem 0;
+      font-size: 0.875rem;
+    }
+
+    button {
+      background: #3b82f6;
+      color: white;
+      border: none;
+      padding: 0.75rem 1.5rem;
+      border-radius: 6px;
+      cursor: pointer;
+      font-size: 1rem;
+      margin-right: 0.5rem;
+      transition: background 0.2s;
+    }
+
+    button:hover {
+      background: #2563eb;
+    }
+
+    button:active {
+      transform: scale(0.98);
+    }
+
+    .log {
+      margin-top: 1rem;
+      padding: 1rem;
+      background: #1f2937;
+      color: #10b981;
+      border-radius: 4px;
+      max-height: 300px;
+      overflow-y: auto;
+      font-family: 'Courier New', monospace;
+      font-size: 0.875rem;
+    }
+
+    .log-entry {
+      margin-bottom: 0.25rem;
+    }
+  </style>
+</head>
+
+<body>
+  <div class="container">
+    <h1>📤 @ldesign/upload - Vanilla JS Examples</h1>
+
+    <div class="examples">
+      <!-- Example 1: Basic Upload -->
+      <div class="example">
+        <h2>1️⃣ Basic Upload</h2>
+        <p>Click or drag & drop files to upload</p>
+
+        <div id="uploader"></div>
+
+        <div class="stats">
+          <p><strong>Statistics:</strong></p>
+          <p>Total Files: <span id="total-files">0</span></p>
+          <p>Uploading: <span id="uploading-files">0</span></p>
+          <p>Completed: <span id="completed-files">0</span></p>
+          <p>Failed: <span id="failed-files">0</span></p>
+        </div>
+
+        <div style="margin-top: 1rem;">
+          <button onclick="uploadAll()">Upload All</button>
+          <button onclick="clearAll()">Clear All</button>
+        </div>
+
+        <div class="log" id="log"></div>
+      </div>
+
+      <!-- Example 2: With Image Processing -->
+      <div class="example">
+        <h2>2️⃣ With Image Compression</h2>
+        <p>Upload images with automatic compression</p>
+
+        <div id="uploader-with-compression"
+          style="min-height: 200px; border: 2px dashed #ddd; border-radius: 8px; padding: 2rem; text-align: center;">
+          <p>Drop images here to compress before upload</p>
+        </div>
+      </div>
+
+      <!-- Example 3: API Reference -->
+      <div class="example">
+        <h2>📚 Quick API Reference</h2>
+        <pre style="background: #f9fafb; padding: 1rem; border-radius: 4px; overflow-x: auto;"><code>// Import
+import { Uploader } from '@ldesign/upload'
+
+// Create instance
+const uploader = new Uploader({
+  container: '#uploader',
+  endpoint: '/api/upload',
+  autoUpload: false,
+  validation: {
+    accept: 'image/*,video/*',
+    maxSize: 10 * 1024 * 1024 // 10MB
+  }
+})
+
+// Listen to events
+uploader.on('fileAdded', (file) => {
+  console.log('File added:', file.file.name)
+})
+
+uploader.on('uploadSuccess', (fileId, response) => {
+  console.log('Upload successful:', response)
+})
+
+// Methods
+uploader.uploadAll()       // Upload all files
+uploader.clear()           // Clear all files
+uploader.openFilePicker()  // Open file picker
+</code></pre>
+      </div>
+    </div>
+  </div>
+
+  <link rel="stylesheet" href="../../src/styles/uploader.css">
+
+  <script type="module">
+    import { Uploader } from '../../src/index.ts'
+
+    // Create main uploader instance
+    const uploader = new Uploader({
+      container: '#uploader',
+      endpoint: '/api/upload', // This would be your actual upload endpoint
+      autoUpload: false,
+      validation: {
+        accept: '*',
+        maxSize: 50 * 1024 * 1024, // 50MB
+        maxFiles: 10
+      },
+      chunked: true,
+      chunkSize: 5 * 1024 * 1024 // 5MB chunks
+    })
+
+    // Setup event listeners
+    uploader.on('fileAdded', (file) => {
+      log(`✅ File added: ${file.file.name} (${formatSize(file.totalSize)})`)
+      updateStats()
+    })
+
+    uploader.on('uploadStart', (fileId) => {
+      const file = uploader.getFile(fileId)
+      log(`🚀 Upload started: ${file?.file.name}`)
+      updateStats()
+    })
+
+    uploader.on('uploadProgress', (event) => {
+      const file = uploader.getFile(event.fileId)
+      log(`📊 Progress: ${file?.file.name} - ${event.progress.toFixed(1)}% (${formatSpeed(event.speed)})`)
+    })
+
+    uploader.on('uploadSuccess', (fileId, response) => {
+      const file = uploader.getFile(fileId)
+      log(`✅ Upload complete: ${file?.file.name}`)
+      updateStats()
+    })
+
+    uploader.on('uploadError', (fileId, error) => {
+      const file = uploader.getFile(fileId)
+      log(`❌ Upload failed: ${file?.file.name} - ${error.message}`)
+      updateStats()
+    })
+
+    uploader.on('validationError', ({ file, error }) => {
+      log(`⚠️ Validation error: ${file.name} - ${error.message}`)
+    })
+
+    // Create uploader with compression
+    const uploaderWithCompression = new Uploader({
+      container: '#uploader-with-compression',
+      endpoint: '/api/upload',
+      autoUpload: true,
+      validation: {
+        accept: 'image/*',
+        maxSize: 20 * 1024 * 1024 // 20MB
+      },
+      imageProcess: {
+        compress: true,
+        quality: 0.8,
+        maxWidth: 1920,
+        maxHeight: 1080
+      }
+    })
+
+    uploaderWithCompression.on('fileAdded', (file) => {
+      log(`🖼️ Image added for compression: ${file.file.name}`)
+    })
+
+    // Utility functions
+    function updateStats() {
+      const stats = uploader.getStats()
+      document.getElementById('total-files').textContent = stats.total
+      document.getElementById('uploading-files').textContent = stats.uploading
+      document.getElementById('completed-files').textContent = stats.success
+      document.getElementById('failed-files').textContent = stats.error
+    }
+
+    function log(message) {
+      const logEl = document.getElementById('log')
+      const entry = document.createElement('div')
+      entry.className = 'log-entry'
+      entry.textContent = `[${new Date().toLocaleTimeString()}] ${message}`
+      logEl.appendChild(entry)
+      logEl.scrollTop = logEl.scrollHeight
+    }
+
+    function formatSize(bytes) {
+      if (bytes === 0) return '0 B'
+      const k = 1024
+      const sizes = ['B', 'KB', 'MB', 'GB']
+      const i = Math.floor(Math.log(bytes) / Math.log(k))
+      return `${parseFloat((bytes / Math.pow(k, i)).toFixed(2))} ${sizes[i]}`
+    }
+
+    function formatSpeed(bytesPerSecond) {
+      return `${formatSize(bytesPerSecond)}/s`
+    }
+
+    // Global functions for buttons
+    window.uploadAll = () => {
+      uploader.uploadAll()
+      log('📤 Starting upload for all files...')
+    }
+
+    window.clearAll = () => {
+      uploader.clear()
+      log('🗑️ Cleared all files')
+      updateStats()
+    }
+
+    // Initial log
+    log('🎉 Uploader initialized and ready!')
+    updateStats()
+  </script>
+</body>
+
+</html>
