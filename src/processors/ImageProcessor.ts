@@ -191,8 +191,20 @@ export class ImageProcessor {
         break
 
       case 'blur':
-        // Simple box blur (for better performance, consider using CSS filter)
-        // This is a simplified implementation
+        // Gaussian blur using canvas filter (modern browsers)
+        const blurAmount = filter.value || 5
+        // Create temporary canvas for blur
+        const tempCanvas = document.createElement('canvas')
+        const tempCtx = tempCanvas.getContext('2d')
+        if (tempCtx) {
+          tempCanvas.width = canvas.width
+          tempCanvas.height = canvas.height
+          tempCtx.filter = `blur(${blurAmount}px)`
+          tempCtx.drawImage(canvas, 0, 0)
+          ctx.clearRect(0, 0, canvas.width, canvas.height)
+          ctx.drawImage(tempCanvas, 0, 0)
+          return // Skip putImageData since we used drawImage
+        }
         break
 
       case 'custom':

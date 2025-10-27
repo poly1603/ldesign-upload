@@ -240,12 +240,34 @@ export class ChunkManager extends SimpleEventEmitter {
   }
 
   /**
-   * Calculate MD5 hash of a file chunk (placeholder - requires @ldesign/crypto)
+   * Calculate MD5 hash of a file chunk
    */
   async calculateChunkHash(chunk: Blob): Promise<string> {
-    // TODO: Integrate with @ldesign/crypto for MD5 calculation
-    // For now, return a simple identifier
-    return `chunk-${chunk.size}-${Date.now()}`
+    try {
+      const { hash } = await import('@ldesign/crypto')
+      const text = await chunk.text()
+      const result = hash.md5(text)
+      return result.hash
+    } catch (error) {
+      console.warn('Failed to calculate MD5 hash, using fallback:', error)
+      // Fallback to simple identifier if crypto is not available
+      return `chunk-${chunk.size}-${Date.now()}`
+    }
+  }
+
+  /**
+   * Calculate MD5 hash of entire file
+   */
+  async calculateFileHash(file: File): Promise<string> {
+    try {
+      const { hash } = await import('@ldesign/crypto')
+      const text = await file.text()
+      const result = hash.md5(text)
+      return result.hash
+    } catch (error) {
+      console.warn('Failed to calculate file hash, using fallback:', error)
+      return `file-${file.name}-${file.size}-${file.lastModified}`
+    }
   }
 
   /**

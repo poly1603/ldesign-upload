@@ -94,7 +94,17 @@ export {
   ErrorHandler,
   UploadError,
   UploadHistory,
+  // Advanced features
+  DuplicationDetector,
+  RateLimiter,
+  AdaptiveRateLimiter,
+  WorkerPool,
+  getWorkerPool,
+  terminateWorkerPool,
+  OfflineCache,
 } from './core'
+
+export type { WorkerTask, WorkerResult } from './core'
 
 // Processors
 export { ImageProcessor, VideoProcessor } from './processors'
